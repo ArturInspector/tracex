@@ -9,7 +9,9 @@ export interface TransportConfig {
 }
 
 export class Transport {
-  private readonly config: Required<TransportConfig>;
+  private readonly config: Required<Omit<TransportConfig, 'apiKey'>> & {
+    apiKey?: string;
+  };
 
   constructor(config: TransportConfig) {
     this.config = {

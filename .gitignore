@@ -8,3 +8,8 @@ dist/
 coverage/
 .nyc_output/
 TEST.md
+logger/NPM_PUBLISH.md
+logger/PERFORMANCE.md
+logger/POSTULATES.md
+logger/SUMMARY.md
+logger/jest.config.js

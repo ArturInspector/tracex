@@ -8,13 +8,13 @@
 let fs: typeof import('fs') | null = null;
 let promisify: typeof import('util').promisify | null = null;
 
-function getNodeModules() {
+async function getNodeModules() {
   if (typeof process !== 'undefined' && process.versions?.node) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      fs = require('fs');
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      promisify = require('util').promisify;
+      const fsModule = await import('fs');
+      const utilModule = await import('util');
+      fs = fsModule.default || fsModule;
+      promisify = utilModule.promisify;
       return { fs, promisify };
     } catch {
       return null;
@@ -62,8 +62,8 @@ export class KeyManager {
    */
   private async generateKeysNode(): Promise<KeyPair> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const crypto = require('crypto');
+      const cryptoModule = await import('crypto');
+      const crypto = cryptoModule.default || cryptoModule;
       const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
         modulusLength: this.config.keySize,
         publicKeyEncoding: {
@@ -180,7 +180,7 @@ export class KeyManager {
       return; // В браузере используем localStorage
     }
 
-    const nodeModules = getNodeModules();
+    const nodeModules = await getNodeModules();
     if (!nodeModules || !nodeModules.fs || !nodeModules.promisify) {
       return;
     }
@@ -207,28 +207,25 @@ export class KeyManager {
       };
     }
 
-    // Проверяем localStorage в браузере
     if (typeof window !== 'undefined' && typeof (window as any).localStorage !== 'undefined') {
       const stored = (window as any).localStorage.getItem('tracex_keys');
       if (stored) {
         try {
           return JSON.parse(stored) as KeyPair;
         } catch {
-          // Игнорируем ошибки парсинга
         }
       }
     }
 
     // Пытаемся загрузить из файла (Node.js)
     if (this.isNode) {
-      const nodeModules = getNodeModules();
+      const nodeModules = await getNodeModules();
       if (nodeModules && nodeModules.fs && nodeModules.promisify) {
         try {
           const readFile = nodeModules.promisify(nodeModules.fs.readFile);
           const keysData = await readFile(this.config.keysPath, 'utf8');
           const keyPair = JSON.parse(keysData) as KeyPair;
           
-          // Валидация формата
           if (keyPair.publicKey && keyPair.privateKey) {
             return keyPair;
           }

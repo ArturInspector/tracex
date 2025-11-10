@@ -63,7 +63,7 @@ export function IntegrationsSection() {
         <div className="text-center">
           <h3 className="text-2xl font-bold text-white mb-4">Integration Example</h3>
           <pre className="bg-black/50 p-4 rounded-lg text-left text-sm text-purple-300 font-mono overflow-x-auto">
-{`import { X402Tracer } from '@tracex/logger';
+{`import { X402Tracer } from '@arturinspector/tracex-logger';
 
 const tracer = new X402Tracer({
   apiUrl: 'https://api.tracex.io',

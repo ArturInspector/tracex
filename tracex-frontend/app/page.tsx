@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { StarsBackground } from '@/components/stars-background';
 import { SpeedEffects } from '@/components/speed-effects';
 import { FloatingAlien } from '@/components/floating-alien';
@@ -63,15 +64,17 @@ export default function Home() {
                 <Button 
                   size="lg" 
                   className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white px-8 py-6 text-lg font-medium"
+                  asChild
                 >
-                  Install SDK
+                  <Link href="/dashboard">Dashboard</Link>
                 </Button>
                 <Button 
                   size="lg" 
                   variant="outline"
                   className="border-purple-500/50 text-purple-300 hover:bg-purple-500/20 px-8 py-6 text-lg font-medium"
+                  asChild
                 >
-                  View Docs
+                  <Link href="/docs">Documentation</Link>
                 </Button>
               </div>
             </div>
@@ -80,26 +83,45 @@ export default function Home() {
             <Card className="p-6 bg-black/40 border-purple-500/30 backdrop-blur-sm">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm text-purple-400/70 font-mono">example.ts</span>
-                <Badge variant="outline" className="border-green-500/50 text-green-400 text-xs">
-                  TypeScript
-                </Badge>
+                <div className="flex gap-2">
+                  <Badge variant="outline" className="border-green-500/50 text-green-400 text-xs">
+                    TypeScript
+                  </Badge>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 px-2 text-xs text-purple-300 hover:text-white"
+                    onClick={() => {
+                      const code = `npm install @arturinspector/tracex-logger`;
+                      navigator.clipboard.writeText(code);
+                    }}
+                  >
+                    Copy
+                  </Button>
+                </div>
               </div>
-              <pre className="text-sm text-purple-200 font-mono overflow-x-auto">
-{`import { X402Tracer } from 
-  '@tracex/logger';
+              <div className="space-y-3">
+                <div className="bg-black/60 rounded p-3 border border-purple-500/20">
+                  <div className="text-xs text-purple-400/60 mb-1">Install</div>
+                  <code className="text-sm text-purple-200 font-mono">
+                    npm install @arturinspector/tracex-logger
+                  </code>
+                </div>
+                <pre className="text-sm text-purple-200 font-mono overflow-x-auto bg-black/20 p-3 rounded border border-purple-500/10">
+{`import { X402Tracer } from '@arturinspector/tracex-logger';
 
 const tracer = new X402Tracer({
-  apiUrl: 'https://api.tracex.io'
+  apiUrl: 'https://api.tracex.io',
+  encryption: { enabled: true }
 });
 
-const span = tracer.startSpan(
-  'payment_operation'
-);
-
+const span = tracer.startSpan('payment_operation');
 await span.wrap(async () => {
-  // Your code here
+  // Your payment logic here
+  await verifyTransaction();
 });`}
-              </pre>
+                </pre>
+              </div>
             </Card>
           </div>
 
@@ -179,26 +201,68 @@ await span.wrap(async () => {
               <p className="text-purple-300/60 text-sm mb-4">
                 High-performance distributed tracing SDK for x402 payment operations.
               </p>
-              <Badge className="bg-green-500/20 text-green-400 border-green-500/50">
-                Open Source
-              </Badge>
+              <div className="flex gap-2 flex-wrap">
+                <Badge className="bg-green-500/20 text-green-400 border-green-500/50">
+                  Open Source
+                </Badge>
+                <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/50">
+                  MIT License
+                </Badge>
+                <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/50">
+                  TypeScript
+                </Badge>
+              </div>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">Resources</h3>
               <div className="space-y-2 text-sm">
-                <a href="#" className="block text-purple-400/60 hover:text-purple-300 transition-colors">Documentation</a>
-                <a href="#" className="block text-purple-400/60 hover:text-purple-300 transition-colors">GitHub</a>
-                <a href="#" className="block text-purple-400/60 hover:text-purple-300 transition-colors">API Reference</a>
-                <a href="#" className="block text-purple-400/60 hover:text-purple-300 transition-colors">Examples</a>
+                <Link href="/docs" className="block text-purple-400/60 hover:text-purple-300 transition-colors">
+                  Documentation
+                </Link>
+                <Link
+                  href="https://github.com/x402-labs/tracex"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block text-purple-400/60 hover:text-purple-300 transition-colors"
+                >
+                  GitHub
+                </Link>
+                <Link href="/docs#configuration" className="block text-purple-400/60 hover:text-purple-300 transition-colors">
+                  API Reference
+                </Link>
+                <Link href="/docs#integration" className="block text-purple-400/60 hover:text-purple-300 transition-colors">
+                  Integration examples
+                </Link>
               </div>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">Community</h3>
               <div className="space-y-2 text-sm">
-                <a href="#" className="block text-purple-400/60 hover:text-purple-300 transition-colors">Discord</a>
-                <a href="#" className="block text-purple-400/60 hover:text-purple-300 transition-colors">Twitter</a>
-                <a href="#" className="block text-purple-400/60 hover:text-purple-300 transition-colors">Contributing</a>
-                <a href="#" className="block text-purple-400/60 hover:text-purple-300 transition-colors">License</a>
+                <Link
+                  href="mailto:team@tracex.io"
+                  className="block text-purple-400/60 hover:text-purple-300 transition-colors"
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="https://status.tracex.io"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block text-purple-400/60 hover:text-purple-300 transition-colors"
+                >
+                  Status
+                </Link>
+                <Link href="/docs#performance" className="block text-purple-400/60 hover:text-purple-300 transition-colors">
+                  Benchmarks
+                </Link>
+                <Link
+                  href="https://github.com/x402-labs/tracex/blob/main/LICENSE"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block text-purple-400/60 hover:text-purple-300 transition-colors"
+                >
+                  License
+                </Link>
               </div>
             </div>
           </div>

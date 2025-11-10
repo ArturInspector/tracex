@@ -153,31 +153,31 @@ export default function DashboardPage() {
         {/* Facilitator ID Input + Status */}
         <Card className="p-6 bg-gradient-to-br from-purple-950/50 to-blue-950/50 border-purple-500/30 backdrop-blur-sm">
           <div className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Enter Facilitator ID..."
-                value={facilitatorId}
-                onChange={(e) => setFacilitatorId(e.target.value)}
-                className="bg-black/30 border-purple-500/50 text-white placeholder:text-purple-400/50 font-mono"
-              />
-              <Button
-                onClick={loadTraces}
-                disabled={loading || !facilitatorId.trim()}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                {loading ? 'Loading...' : 'Load Traces'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setPrivateKey(null);
-                  setFacilitatorId('');
-                  setEncryptedTraces([]);
-                }}
-                className="border-purple-500/50 text-purple-300"
-              >
-                Change Key
-              </Button>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Enter Facilitator ID..."
+              value={facilitatorId}
+              onChange={(e) => setFacilitatorId(e.target.value)}
+              className="bg-black/30 border-purple-500/50 text-white placeholder:text-purple-400/50 font-mono"
+            />
+            <Button
+              onClick={loadTraces}
+              disabled={loading || !facilitatorId.trim()}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              {loading ? 'Loading...' : 'Load Traces'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setPrivateKey(null);
+                setFacilitatorId('');
+                setEncryptedTraces([]);
+              }}
+              className="border-purple-500/50 text-purple-300"
+            >
+              Change Key
+            </Button>
             </div>
             
             {/* Live Status Indicators */}

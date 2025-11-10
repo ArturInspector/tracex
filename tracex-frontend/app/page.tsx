@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { StarsBackground } from '@/components/stars-background';
@@ -84,9 +86,9 @@ export default function Home() {
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm text-purple-400/70 font-mono">example.ts</span>
                 <div className="flex gap-2">
-                  <Badge variant="outline" className="border-green-500/50 text-green-400 text-xs">
-                    TypeScript
-                  </Badge>
+                <Badge variant="outline" className="border-green-500/50 text-green-400 text-xs">
+                  TypeScript
+                </Badge>
                   <Button
                     size="sm"
                     variant="ghost"
@@ -120,7 +122,7 @@ await span.wrap(async () => {
   // Your payment logic here
   await verifyTransaction();
 });`}
-                </pre>
+              </pre>
               </div>
             </Card>
           </div>
@@ -202,9 +204,9 @@ await span.wrap(async () => {
                 High-performance distributed tracing SDK for x402 payment operations.
               </p>
               <div className="flex gap-2 flex-wrap">
-                <Badge className="bg-green-500/20 text-green-400 border-green-500/50">
-                  Open Source
-                </Badge>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/50">
+                Open Source
+              </Badge>
                 <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/50">
                   MIT License
                 </Badge>

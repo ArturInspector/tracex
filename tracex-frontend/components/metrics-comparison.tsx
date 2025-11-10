@@ -115,7 +115,7 @@ export function MetricsComparison() {
     <Card className="p-6 bg-gradient-to-br from-purple-950/50 to-blue-950/50 border-purple-500/30 backdrop-blur-sm">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-2xl font-bold text-white">Facilitator Comparison</h3>
+        <h3 className="text-2xl font-bold text-white">Facilitator Comparison</h3>
           {useMockData && (
             <Badge className="mt-1 bg-yellow-500/20 text-yellow-400 border-yellow-500/50 text-xs">
               Demo mode • Mock data

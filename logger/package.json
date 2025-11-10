@@ -1,7 +1,7 @@
 {
-  "name": "@tracex/logger",
+  "name": "@arturinspector/tracex-logger",
   "version": "1.0.0",
-  "description": "Production-ready distributed tracing SDK for x402 payment operations",
+  "description": "distributed tracing SDK for x402 payment operations",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",

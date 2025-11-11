@@ -15,6 +15,14 @@ export interface EncryptedTrace {
   timestamp: number;
 }
 
+async function getCrypto() {
+  if (typeof process !== 'undefined' && process.versions?.node) {
+    const cryptoModule = await import('crypto');
+    return cryptoModule.default || cryptoModule;
+  }
+  return null;
+}
+
 export class EncryptionService {
   /**
    * Шифрование trace с использованием гибридного шифрования
@@ -41,8 +49,10 @@ export class EncryptionService {
     facilitatorId?: string
   ): Promise<EncryptedTrace> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const crypto = require('crypto');
+      const crypto = await getCrypto();
+      if (!crypto) {
+        throw new Error('Node crypto module unavailable');
+      }
 
       // Сериализуем trace в JSON
       const traceJson = JSON.stringify(trace);
@@ -54,7 +64,7 @@ export class EncryptionService {
 
       // Шифруем данные AES-256-GCM
       const cipher = crypto.createCipheriv('aes-256-gcm', aesKey, iv);
-      const encrypted = Buffer.concat([cipher.update(traceBuffer, 'utf8'), cipher.final()]);
+      const encrypted = Buffer.concat([cipher.update(traceBuffer), cipher.final()]);
       const authTag = cipher.getAuthTag();
 
       // Объединяем encrypted data + auth tag
@@ -168,8 +178,10 @@ export class EncryptionService {
    */
   private async decryptTraceNode(encryptedTrace: EncryptedTrace, privateKey: string): Promise<Trace> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const crypto = require('crypto');
+      const crypto = await getCrypto();
+      if (!crypto) {
+        throw new Error('Node crypto module unavailable');
+      }
 
       // Расшифровываем AES ключ RSA приватным ключом
       const aesKeyBuffer = crypto.privateDecrypt(

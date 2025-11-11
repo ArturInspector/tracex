@@ -200,6 +200,15 @@ export class Transport {
         headers['Authorization'] = `Bearer ${this.config.apiKey}`;
       }
 
+      console.debug(
+        '[Transport] Sending encrypted trace',
+        {
+          traceId: encryptedTrace.traceId,
+          facilitatorId: encryptedTrace.facilitatorId,
+          apiUrl: this.config.apiUrl,
+        }
+      );
+
       const response = await fetch(`${this.config.apiUrl}/api/traces`, {
         method: 'POST',
         headers,
@@ -212,6 +221,7 @@ export class Transport {
           `Failed to send encrypted trace: ${response.status} ${response.statusText}`
         );
       }
+      console.debug('[Transport] Trace sent successfully');
     } finally {
       clearTimeout(timeoutId);
     }

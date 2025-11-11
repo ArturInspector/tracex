@@ -1,6 +1,6 @@
 {
   "name": "@arturinspector/tracex-logger",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "distributed tracing SDK for x402 payment operations",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -48,4 +48,3 @@
     "node": ">=18.0.0"
   }
 }
-

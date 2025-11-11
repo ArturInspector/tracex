@@ -163,17 +163,28 @@ export class X402Tracer {
       batches.push(spans.slice(i, i + this.config.batchSize));
     }
 
-    const promises = batches.map((batch) => {
+    const promises = batches.map((batch, index) => {
       const trace: Trace = {
         traceId: this.traceId,
         spans: batch,
         metadata: { ...this.metadata },
       };
 
-      return this.transport!.sendTrace(trace);
+      return this.transport!
+        .sendTrace(trace)
+        .catch((error) => {
+          console.error('[X402Tracer] Failed to send trace batch', index, error);
+          throw error;
+        });
     });
 
-    await Promise.allSettled(promises);
+    const results = await Promise.allSettled(promises);
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        console.error('[X402Tracer] Trace batch rejected', index, result.reason);
+      }
+    });
+    this.traceId = this.generateTraceId();
   }
 
   private generateTraceId(): string {

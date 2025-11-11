@@ -34,10 +34,10 @@ export default function Home() {
         </div>
         {/* Дополнительное затемнение */}
         <div className="absolute inset-0 z-0 bg-black/60" />
-        <div className="max-w-7xl mx-auto w-full relative z-10">
+        <div className="max-w-6xl lg:max-w-7xl mx-auto w-full relative z-10 px-2 sm:px-4">
           {/* Logo and Open Source Badge */}
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-16">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-12 sm:mb-16">
+            <div className="flex items-center gap-4 self-center sm:self-auto text-center sm:text-left">
               <Image
                 src="/logo.png"
                 alt="TraceX logo"
@@ -46,36 +46,36 @@ export default function Home() {
                 priority
                 className="w-16 h-16 md:w-20 md:h-20 drop-shadow-[0_0_25px_rgba(56,189,248,0.35)]"
               />
-              <div className="text-4xl font-mono font-bold text-purple-300 tracking-wider">
+              <div className="text-3xl sm:text-4xl font-mono font-bold text-purple-300 tracking-wider">
                 TRACEX
               </div>
             </div>
-            <Badge className="self-start sm:self-auto bg-green-500/20 text-green-400 border-green-500/50 px-4 py-2">
+            <Badge className="self-center sm:self-auto bg-green-500/20 text-green-400 border-green-500/50 px-4 py-2">
               <span className="mr-2">★</span>
               Open Source
             </Badge>
           </div>
 
           {/* Main Hero Content */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-            <div>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-12 sm:mb-16">
+            <div className="text-center lg:text-left space-y-6">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
                 High-Performance
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
                   Logging SDK
                 </span>
               </h1>
-              <p className="text-xl text-purple-200/80 mb-8 leading-relaxed">
+              <p className="text-base sm:text-lg text-purple-200/80 leading-relaxed mx-auto lg:mx-0 max-w-2xl">
                 Distributed tracing for x402 payment operations monitoring.
                 <br />
-                <span className="text-purple-400/70 font-mono text-lg">
+                <span className="text-purple-400/70 font-mono text-base sm:text-lg">
                   Overhead {'<'} 1ms per span
                 </span>
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 sm:justify-center lg:justify-start">
                 <Button 
                   size="lg" 
-                  className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white px-8 py-6 text-lg font-medium"
+                  className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
                   asChild
                 >
                   <Link href="/dashboard">Dashboard</Link>
@@ -83,7 +83,7 @@ export default function Home() {
                 <Button 
                   size="lg" 
                   variant="outline"
-                  className="border-purple-500/50 text-purple-300 hover:bg-purple-500/20 px-8 py-6 text-lg font-medium"
+                  className="border-purple-500/50 text-purple-300 hover:bg-purple-500/20 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
                   asChild
                 >
                   <Link href="/docs">Documentation</Link>
@@ -92,7 +92,7 @@ export default function Home() {
             </div>
 
             {/* Code Example Card */}
-            <Card className="p-6 bg-black/40 border-purple-500/30 backdrop-blur-sm">
+            <Card className="p-5 sm:p-6 bg-black/40 border-purple-500/30 backdrop-blur-sm w-full max-w-xl mx-auto lg:mx-0">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm text-purple-400/70 font-mono">example.ts</span>
                 <div className="flex gap-2">
@@ -138,22 +138,22 @@ await span.wrap(async () => {
           </div>
 
           {/* Stats Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-300 mb-1 font-mono">{'<'} 1ms</div>
-              <div className="text-sm text-purple-400/70">Overhead per span</div>
+              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">{'<'} 1ms</div>
+              <div className="text-xs sm:text-sm text-purple-400/70">Overhead per span</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-300 mb-1 font-mono">10K+</div>
-              <div className="text-sm text-purple-400/70">Spans per second</div>
+              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">10K+</div>
+              <div className="text-xs sm:text-sm text-purple-400/70">Spans per second</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-300 mb-1 font-mono">MIT</div>
-              <div className="text-sm text-purple-400/70">Open Source</div>
+              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">MIT</div>
+              <div className="text-xs sm:text-sm text-purple-400/70">Open Source</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-300 mb-1 font-mono">100%</div>
-              <div className="text-sm text-purple-400/70">Non-blocking</div>
+              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">100%</div>
+              <div className="text-xs sm:text-sm text-purple-400/70">Non-blocking</div>
             </div>
           </div>
         </div>
@@ -163,10 +163,10 @@ await span.wrap(async () => {
       <section className="relative z-10 px-4 py-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
               Performance Metrics
             </h2>
-            <p className="text-purple-300/70 text-lg">
+            <p className="text-purple-300/70 text-base sm:text-lg px-2">
               Real numbers. Benchmarked. Verified.
             </p>
           </div>

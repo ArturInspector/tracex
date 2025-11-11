@@ -57,16 +57,16 @@ export function LiveLogs() {
         </Badge>
       </div>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 mb-4">
         <Input
           placeholder="Enter wallet address..."
           value={wallet}
           onChange={(e) => setWallet(e.target.value)}
-          className="bg-black/30 border-purple-500/50 text-white placeholder:text-purple-400/50 font-mono"
+          className="bg-black/30 border-purple-500/50 text-white placeholder:text-purple-400/50 font-mono w-full"
         />
         <Button
           onClick={() => setIsWatching(!isWatching)}
-          className={isWatching ? 'bg-red-600 hover:bg-red-700' : 'bg-purple-600 hover:bg-purple-700'}
+          className={`${isWatching ? 'bg-red-600 hover:bg-red-700' : 'bg-purple-600 hover:bg-purple-700'} w-full sm:w-auto`}
         >
           {isWatching ? 'Stop' : 'Start'}
         </Button>

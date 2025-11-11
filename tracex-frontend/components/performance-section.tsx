@@ -29,10 +29,10 @@ export function PerformanceSection() {
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h2 className="text-4xl font-bold text-white mb-4">
+        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
           Fast Logging Mechanism
         </h2>
-        <p className="text-purple-300/70 text-lg">
+        <p className="text-purple-300/70 text-base sm:text-lg px-2">
           We made logging faster than thought speed. Seriously.
         </p>
       </div>

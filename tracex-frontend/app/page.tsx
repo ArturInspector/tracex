@@ -50,8 +50,7 @@ export default function Home() {
                 <div className="text-xs uppercase tracking-[0.35em] text-cyan-300/70 mb-1 sm:text-sm">
                   TraceX
                 </div>
-                <div className="text-3xl sm:text-4xl font-mono font-bold text-purple-200 tracking-wide">
-                  High-Performance Tracing
+                <div className="text-2xl sm:text-3xl font-mono font-semibold text-purple-200 tracking-wide">
                 </div>
               </div>
             </div>
@@ -72,7 +71,7 @@ export default function Home() {
                   </span>
                 </h1>
                 <p className="text-base sm:text-lg text-purple-100/80 leading-relaxed max-w-xl">
-                  TraceX streams payment spans без блокировок: шифрование, буферизация и отправка работают асинхронно, пока критичный код делает свою работу.
+                  TraceX streams payment spans.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
                   <Button 
@@ -158,6 +157,11 @@ await span.wrap(async () => {
               <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">100%</div>
               <div className="text-xs sm:text-sm text-purple-400/70">Non-blocking</div>
             </div>
+          </div>
+          <div className="mt-6 flex justify-center">
+            <Badge variant="outline" className="border-white/20 text-white/70 uppercase tracking-[0.3em] px-5 py-2">
+              Don't be blind in x402
+            </Badge>
           </div>
         </div>
       </section>

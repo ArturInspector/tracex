@@ -20,3 +20,21 @@ export interface PublicMetrics {
   timestamp: number;
 }
 
+export interface OnchainWalletState {
+  address: string;
+  lamports: number;
+  sol: number;
+  slot: number;
+  epoch: number;
+  timestamp: string;
+}
+
+export interface OnchainSignatureStatus {
+  signature: string;
+  status: 'processed' | 'confirmed' | 'finalized' | 'not_found';
+  slot: number | null;
+  confirmations: number | null;
+  err: string | null;
+  timestamp: string;
+}
+

@@ -19,8 +19,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "@solana/web3.js": "^1.98.4",
     "cors": "^2.8.5",
+    "express": "^4.18.2",
     "helmet": "^7.1.0",
     "pg": "^8.11.3",
     "zod": "^3.22.4"
@@ -37,4 +38,3 @@
     "node": ">=18.0.0"
   }
 }
-

@@ -1,8 +1,3 @@
-/**
- * TraceX Backend API Server
- * Express сервер для приема и хранения зашифрованных traces
- */
-
 import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -10,16 +5,15 @@ import { DatabaseClient } from './db/client.js';
 import { createTracesRoutes } from './api/traces.js';
 import { createKeysRoutes } from './api/keys.js';
 import { createMetricsRoutes } from './api/metrics.js';
+import { createOnchainRoutes } from './api/onchain.js';
+import { SolanaReader } from './services/solana-reader.js';
 
 const app: Express = express();
 
-// Middleware
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-
-// Database configuration from environment
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432', 10),
@@ -31,18 +25,36 @@ const dbConfig = {
 
 const db = new DatabaseClient(dbConfig);
 
-// API Routes
+const rpcEndpoints = (process.env.SOLANA_RPC_ENDPOINTS || '')
+  .split(',')
+  .map((endpoint) => endpoint.trim())
+  .filter(Boolean);
+
+if (!rpcEndpoints.length) {
+  rpcEndpoints.push('https://api.mainnet-beta.solana.com');
+}
+
+const solanaReader = new SolanaReader({
+  endpoints: rpcEndpoints,
+  commitment: (process.env.SOLANA_COMMITMENT as 'processed' | 'confirmed' | 'finalized') || 'confirmed',
+  walletCacheTtlMs: parseInt(process.env.ONCHAIN_WALLET_CACHE_TTL_MS || '5000', 10),
+  signatureCacheTtlMs: parseInt(process.env.ONCHAIN_SIGNATURE_CACHE_TTL_MS || '5000', 10),
+});
+
+
 const tracesRoutes = createTracesRoutes(db);
 const keysRoutes = createKeysRoutes(db);
 const metricsRoutes = createMetricsRoutes(db);
+const onchainRoutes = createOnchainRoutes(solanaReader);
 
 app.post('/api/traces', tracesRoutes.postTraces);
 app.get('/api/traces', tracesRoutes.getTraces);
 app.post('/api/keys/register', keysRoutes.registerKey);
 app.get('/api/metrics/public', metricsRoutes.getPublicMetrics);
 app.post('/api/metrics/publish', metricsRoutes.publishMetrics);
+app.get('/api/onchain/wallet', onchainRoutes.getWalletState);
+app.post('/api/onchain/signatures', onchainRoutes.postSignatureStatuses);
 
-// Health check
 app.get('/health', (_req, res) => {
   res.json({
     success: true,

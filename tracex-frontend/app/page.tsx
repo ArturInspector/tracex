@@ -36,7 +36,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0 bg-black/60" />
         <div className="max-w-7xl mx-auto w-full relative z-10">
           {/* Logo and Open Source Badge */}
-          <div className="flex items-center justify-between mb-16">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-16">
             <div className="flex items-center gap-4">
               <Image
                 src="/logo.png"
@@ -50,7 +50,7 @@ export default function Home() {
                 TRACEX
               </div>
             </div>
-            <Badge className="bg-green-500/20 text-green-400 border-green-500/50 px-4 py-2">
+            <Badge className="self-start sm:self-auto bg-green-500/20 text-green-400 border-green-500/50 px-4 py-2">
               <span className="mr-2">★</span>
               Open Source
             </Badge>
@@ -138,7 +138,7 @@ await span.wrap(async () => {
           </div>
 
           {/* Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-300 mb-1 font-mono">{'<'} 1ms</div>
               <div className="text-sm text-purple-400/70">Overhead per span</div>

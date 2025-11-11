@@ -4,34 +4,73 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 export function SpeedEffects() {
-  const [speedLines, setSpeedLines] = useState<Array<{ id: number; delay: number; left: number }>>([]);
+  const [speedLines, setSpeedLines] = useState<Array<{ id: number; delay: number; left: number; top: number }>>([]);
   const [particles, setParticles] = useState<Array<{ id: number; delay: number; left: number }>>([]);
   const [showRockets, setShowRockets] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Create speed lines - оптимизировано количество
-    const lines = Array.from({ length: 20 }, (_, i) => ({
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    const updateIsMobile = (event?: MediaQueryListEvent) => {
+      setIsMobile(event ? event.matches : mediaQuery.matches);
+    };
+
+    updateIsMobile();
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', updateIsMobile);
+    } else {
+      mediaQuery.addListener(updateIsMobile);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', updateIsMobile);
+      } else {
+        mediaQuery.removeListener(updateIsMobile);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const lineCount = isMobile ? 6 : 20;
+    const particleCount = isMobile ? 6 : 15;
+
+    const lines = Array.from({ length: lineCount }, (_, i) => ({
       id: i,
-      delay: Math.random() * 3,
+      delay: Math.random() * (isMobile ? 1.5 : 3),
       left: Math.random() * 100,
+      top: Math.random() * 100,
     }));
     setSpeedLines(lines);
 
-    // Create particles - оптимизировано количество
-    const parts = Array.from({ length: 15 }, (_, i) => ({
+    const parts = Array.from({ length: particleCount }, (_, i) => ({
       id: i,
-      delay: Math.random() * 8,
+      delay: Math.random() * (isMobile ? 4 : 8),
       left: Math.random() * 100,
     }));
     setParticles(parts);
 
-    // Показываем ракеты после загрузки страницы
-    const timer = setTimeout(() => {
-      setShowRockets(true);
-    }, 1000);
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
-    return () => clearTimeout(timer);
-  }, []);
+    if (!isMobile) {
+      timer = setTimeout(() => {
+        setShowRockets(true);
+      }, 1000);
+    } else {
+      setShowRockets(false);
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [isMobile]);
 
   return (
     <>
@@ -42,9 +81,9 @@ export function SpeedEffects() {
           className="speed-line"
           style={{
             left: `${line.left}%`,
-            top: `${Math.random() * 100}%`,
+            top: `${line.top}%`,
             animationDelay: `${line.delay}s`,
-            animationDuration: `${2 + Math.random() * 2}s`,
+            animationDuration: `${isMobile ? 1.5 + Math.random() * 1.5 : 2 + Math.random() * 2}s`,
           }}
         />
       ))}
@@ -57,7 +96,7 @@ export function SpeedEffects() {
           style={{
             left: `${particle.left}%`,
             animationDelay: `${particle.delay}s`,
-            animationDuration: `${6 + Math.random() * 4}s`,
+            animationDuration: `${isMobile ? 4 + Math.random() * 2 : 6 + Math.random() * 4}s`,
           }}
         />
       ))}

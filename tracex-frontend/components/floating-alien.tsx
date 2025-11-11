@@ -2,7 +2,7 @@
 
 export function FloatingAlien() {
   return (
-    <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50 animate-float">
+    <div className="hidden md:block fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-50 animate-float">
       <div className="relative w-20 h-20 md:w-32 md:h-32">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-cyan-500/20 rounded-full blur-xl animate-pulse-glow" />
         <div className="relative w-full h-full flex items-center justify-center">

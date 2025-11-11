@@ -88,6 +88,17 @@ export class DatabaseClient {
     await this.pool.query(query, [facilitatorId, publicKey]);
   }
 
+  async getFacilitatorPublicKey(facilitatorId: string): Promise<string | null> {
+    const query = `
+      SELECT public_key 
+      FROM facilitator_keys 
+      WHERE facilitator_id = $1
+    `;
+
+    const result = await this.pool.query(query, [facilitatorId]);
+    return result.rows[0]?.public_key || null;
+  }
+
   /**
    * Получение зашифрованных traces по facilitator_id
    */

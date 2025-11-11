@@ -6,7 +6,11 @@ const TRACE_FETCH_LIMIT = 40;
 const TRACE_POLL_INTERVAL_MS = 3_500;
 const MAX_LOG_ITEMS = 60;
 
-interface ApiEncryptedTrace extends EncryptedTrace {
+interface ApiEncryptedTracePayload extends Partial<EncryptedTrace> {
+  trace_id?: string;
+  facilitator_id?: string;
+  encrypted_data?: string;
+  aes_key_encrypted?: string;
   createdAt?: string | number;
 }
 
@@ -73,24 +77,36 @@ export function useLiveSpanFeed({
         }
 
         const json = await response.json();
-        const entries: ApiEncryptedTrace[] = Array.isArray(json.data) ? json.data : [];
+        const entries: ApiEncryptedTracePayload[] = Array.isArray(json.data) ? json.data : [];
 
-        const normalised = entries.map<ApiEncryptedTrace>((trace) => {
-          const timestamp =
-            typeof trace.timestamp === 'number'
-              ? trace.timestamp
-              : trace.createdAt
-                ? new Date(trace.createdAt).getTime()
-                : Date.now();
+        const normalised = entries
+          .map<EncryptedTrace | null>((trace) => {
+            const traceId = trace.traceId ?? trace.trace_id;
+            const encryptedData = trace.encryptedData ?? trace.encrypted_data;
+            const aesKeyEncrypted = trace.aesKeyEncrypted ?? trace.aes_key_encrypted;
+            const iv = trace.iv;
 
-          return {
-            traceId: trace.traceId ?? trace.trace_id,
-            encryptedData: trace.encryptedData ?? trace.encrypted_data,
-            aesKeyEncrypted: trace.aesKeyEncrypted ?? trace.aes_key_encrypted,
-            iv: trace.iv,
-            timestamp,
-          };
-        });
+            if (!traceId || !encryptedData || !aesKeyEncrypted || !iv) {
+              return null;
+            }
+
+            const timestamp =
+              typeof trace.timestamp === 'number'
+                ? trace.timestamp
+                : trace.createdAt
+                  ? new Date(trace.createdAt).getTime()
+                  : Date.now();
+
+            return {
+              traceId,
+              facilitatorId: trace.facilitatorId ?? trace.facilitator_id,
+              encryptedData,
+              aesKeyEncrypted,
+              iv,
+              timestamp,
+            };
+          })
+          .filter((trace): trace is EncryptedTrace => trace !== null);
 
         const decrypted = await Promise.allSettled(
           normalised.map((trace) =>

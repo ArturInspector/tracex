@@ -1,8 +1,9 @@
-# TraceX
+# TraceX, x402.
 
 ## Distributed Tracing for x402 Payment Operations
 
 TraceX is a high-performance distributed tracing SDK designed specifically for x402 payment facilitators. It provides real-time visibility into payment operations with minimal overhead and end-to-end encryption. So comfort logs you haven't seen any!
+Solana Hackathon X402 - https://youtu.be/1Z8jjI2biE8 SDK Nominate.
 
 **Key Features:**
 
@@ -24,6 +25,7 @@ TraceX is a high-performance distributed tracing SDK designed specifically for x
 
 https://tracex-bice.vercel.app
 https://tracex-bice.vercel.app/docs
+https://youtu.be/1Z8jjI2biE8 - presentation.
 
 ---
 

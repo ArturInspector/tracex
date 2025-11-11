@@ -31,6 +31,7 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   const liveTelemetryEnabled = Boolean(privateKey && facilitatorId);
 
@@ -78,6 +79,33 @@ export default function DashboardPage() {
       return;
     }
 
+    // Сначала проверяем demo credentials (приоритет)
+    const demoMode = window.sessionStorage.getItem('demo_mode');
+    const demoFacilitatorId = window.sessionStorage.getItem('demo_facilitatorId');
+    const demoDecryptKey = window.sessionStorage.getItem('demo_decryptKey');
+
+    if (demoMode === 'true' && demoFacilitatorId && demoDecryptKey) {
+      // Декодируем private key из base64 в PEM формат
+      let pemKey: string;
+      try {
+        pemKey = atob(demoDecryptKey); // base64 → PEM string
+      } catch (e) {
+        console.error('Failed to decode demo private key:', e);
+        pemKey = demoDecryptKey; // Fallback если уже в PEM формате
+      }
+      
+      // Загружаем demo credentials
+      setFacilitatorId(demoFacilitatorId);
+      setPrivateKey(pemKey);
+      setIsDemoMode(true);
+      
+      // Очищаем demo флаг чтобы не перезаписывать при перезагрузке
+      window.sessionStorage.removeItem('demo_mode');
+      
+      return; // Не загружаем обычные credentials
+    }
+
+    // Если demo нет, загружаем обычные credentials
     const savedKey = window.sessionStorage.getItem(SESSION_KEY_PRIVATE);
     if (savedKey) {
       setPrivateKey(savedKey);
@@ -155,8 +183,19 @@ export default function DashboardPage() {
     <div className="min-h-screen cosmic-bg relative overflow-x-hidden p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">TraceX Dashboard</h1>
-          <p className="text-purple-300/70">Encrypted telemetry for your spans.</p>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-bold text-white">TraceX Dashboard</h1>
+            {isDemoMode && (
+              <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-500/40 text-sm">
+                Demo Mode
+              </Badge>
+            )}
+          </div>
+          <p className="text-purple-300/70">
+            {isDemoMode 
+              ? 'Viewing encrypted demo data with real AES-256-GCM encryption.' 
+              : 'Encrypted telemetry for your spans.'}
+          </p>
         </div>
 
         <Card className="p-6 bg-gradient-to-br from-purple-950/50 to-blue-950/50 border-purple-500/30 backdrop-blur-sm">

@@ -104,7 +104,7 @@ export function SpeedEffects() {
       {/* Rocket - летает по экрану, появляется после загрузки */}
       {showRockets && (
         <>
-          <div className="fixed top-1/4 left-0 z-20 rocket" style={{ animationDelay: '0s' }}>
+          <div className="fixed top-1/4 z-20 rocket" style={{ animationDelay: '0s' }}>
             <div className="relative">
               {/* Rocket trail - длинный след */}
               <div className="rocket-trail" style={{ top: '50%', left: '-200px', width: '300px' }} />
@@ -124,7 +124,7 @@ export function SpeedEffects() {
           </div>
           
           {/* Вторая ракета для большего эффекта */}
-          <div className="fixed top-3/4 left-0 z-20 rocket" style={{ animationDelay: '6s' }}>
+          <div className="fixed top-3/4 z-20 rocket" style={{ animationDelay: '6s' }}>
             <div className="relative">
               <div className="rocket-trail" style={{ top: '50%', left: '-200px', width: '300px' }} />
               <div className="relative w-16 h-16 md:w-24 md:h-24 opacity-70">

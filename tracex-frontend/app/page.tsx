@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { HeroSteps } from '@/components/home/cta-steps';
 import { QuickStartStrip } from '@/components/home/quick-start-strip';
 import { TagInfographic } from '@/components/home/tag-infographic';
+import { AnimatedStats } from '@/components/home/animated-stats';
 
 export default function Home() {
   return (
@@ -79,7 +80,15 @@ export default function Home() {
                 <div className="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
                   <Button 
                     size="lg" 
-                    className="bg-gradient-to-r from-purple-600 via-violet-600 to-cyan-500 hover:from-purple-600/90 hover:via-violet-600/90 hover:to-cyan-500/90 text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto shadow-[0_18px_55px_rgba(59,130,246,0.25)]"
+                    className="bg-gradient-to-r from-purple-600 via-violet-600 to-cyan-500 hover:from-purple-700 hover:via-violet-700 hover:to-cyan-600 text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto shadow-[0_20px_60px_rgba(168,85,247,0.3)]"
+                    asChild
+                  >
+                    <Link href="/demo">Try Demo</Link>
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    className="border-purple-400/40 text-purple-100 hover:bg-purple-500/10 hover:text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
                     asChild
                   >
                     <Link href="/dashboard">Dashboard</Link>
@@ -87,10 +96,10 @@ export default function Home() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-purple-400/40 text-purple-100 hover:bg-purple-500/10 hover:text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
+                    className="border-purple-400/30 text-purple-200/80 hover:bg-purple-500/5 hover:text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
                     asChild
                   >
-                    <Link href="/docs">Documentation</Link>
+                    <Link href="/docs">Docs</Link>
                   </Button>
                 </div>
               </div>
@@ -143,30 +152,8 @@ await span.wrap(async () => {
             </Card>
           </div>
 
-          {/* Stats Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mt-10">
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">{'<'} 1ms</div>
-              <div className="text-xs sm:text-sm text-purple-400/70">Overhead per span</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">9K</div>
-              <div className="text-xs sm:text-sm text-purple-400/70">Spans per second</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">MIT</div>
-              <div className="text-xs sm:text-sm text-purple-400/70">Open Source</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">100%</div>
-              <div className="text-xs sm:text-sm text-purple-400/70">Non-blocking</div>
-            </div>
-          </div>
-          <div className="mt-10 flex justify-center">
-            <Badge variant="outline" className="border-white/20 text-white/70 uppercase tracking-[0.3em] px-5 py-2">
-              Don't be blind in x402
-            </Badge>
-          </div>
+          {/* Animated Stats Row */}
+          <AnimatedStats />
           <div className="mt-14">
             <HeroSteps />
           </div>

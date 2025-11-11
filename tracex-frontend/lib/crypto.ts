@@ -62,10 +62,10 @@ export class DecryptionService {
       );
 
       // Декодируем IV
-      const iv = this.base64ToUint8Array(encryptedTrace.iv);
+      const iv = this.base64ToArrayBuffer(encryptedTrace.iv);
 
       // Декодируем зашифрованные данные
-      const encryptedBuffer = this.base64ToUint8Array(encryptedTrace.encryptedData);
+      const encryptedBuffer = this.base64ToArrayBuffer(encryptedTrace.encryptedData);
 
       // Расшифровываем данные AES-256-GCM
       const decrypted = await crypto.subtle.decrypt(

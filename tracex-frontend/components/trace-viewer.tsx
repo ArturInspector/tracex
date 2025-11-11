@@ -163,13 +163,13 @@ export function TraceViewer({ encryptedTraces, privateKey, facilitatorId }: Trac
           Traces ({traces.length})
         </h3>
         <div className="space-y-2 max-h-96 overflow-y-auto">
-          {traces.map((trace) => {
+          {traces.map((trace, index) => {
             const totalDuration = trace.spans.reduce((sum, span) => sum + span.duration / 1e6, 0);
             const hasError = trace.spans.some((s) => s.status === 'error');
 
             return (
               <div
-                key={trace.traceId}
+                key={`${trace.traceId}-${index}`}
                 onClick={() => setSelectedTrace(trace)}
                 className={`p-3 bg-black/30 rounded-lg border cursor-pointer transition-all ${
                   selectedTrace?.traceId === trace.traceId

@@ -62,10 +62,10 @@ export class DecryptionService {
       );
 
       // Декодируем IV
-      const iv = this.base64ToArrayBuffer(encryptedTrace.iv);
+      const iv = this.base64ToUint8Array(encryptedTrace.iv);
 
       // Декодируем зашифрованные данные
-      const encryptedBuffer = this.base64ToArrayBuffer(encryptedTrace.encryptedData);
+      const encryptedBuffer = this.base64ToUint8Array(encryptedTrace.encryptedData);
 
       // Расшифровываем данные AES-256-GCM
       const decrypted = await crypto.subtle.decrypt(
@@ -82,6 +82,10 @@ export class DecryptionService {
       const traceJson = new TextDecoder().decode(decrypted);
       return JSON.parse(traceJson) as Trace;
     } catch (error) {
+      console.error('[DecryptionService] Failed to decrypt trace', {
+        traceId: encryptedTrace.traceId,
+        error,
+      });
       throw new Error(`Decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -121,5 +125,9 @@ export class DecryptionService {
     }
     return bytes.buffer;
   }
-}
 
+  private base64ToUint8Array(base64: string): Uint8Array {
+    const buffer = this.base64ToArrayBuffer(base64);
+    return new Uint8Array(buffer);
+  }
+}

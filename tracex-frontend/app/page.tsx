@@ -37,8 +37,18 @@ export default function Home() {
         <div className="max-w-7xl mx-auto w-full relative z-10">
           {/* Logo and Open Source Badge */}
           <div className="flex items-center justify-between mb-16">
-            <div className="text-4xl font-mono font-bold text-purple-300 tracking-wider">
-              TRACEX
+            <div className="flex items-center gap-4">
+              <Image
+                src="/logo.png"
+                alt="TraceX logo"
+                width={80}
+                height={80}
+                priority
+                className="w-16 h-16 md:w-20 md:h-20 drop-shadow-[0_0_25px_rgba(56,189,248,0.35)]"
+              />
+              <div className="text-4xl font-mono font-bold text-purple-300 tracking-wider">
+                TRACEX
+              </div>
             </div>
             <Badge className="bg-green-500/20 text-green-400 border-green-500/50 px-4 py-2">
               <span className="mr-2">★</span>
@@ -199,7 +209,16 @@ await span.wrap(async () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="text-2xl font-mono font-bold text-purple-300 mb-4">TRACEX</div>
+              <div className="flex items-center gap-3 mb-4">
+                <Image
+                  src="/logo.png"
+                  alt="TraceX logo"
+                  width={56}
+                  height={56}
+                  className="w-12 h-12 drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]"
+                />
+                <div className="text-2xl font-mono font-bold text-purple-300">TRACEX</div>
+              </div>
               <p className="text-purple-300/60 text-sm mb-4">
                 High-performance distributed tracing SDK for x402 payment operations.
               </p>

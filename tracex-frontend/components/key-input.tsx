@@ -163,13 +163,13 @@ export function KeyInput({ onKeySet }: KeyInputProps) {
 
         <div className="grid gap-6 lg:grid-cols-[2fr,1.2fr]">
       <div className="space-y-4">
-            <Textarea
+        <Textarea
               placeholder="Paste PEM block or the entire .tracex-keys.json contents"
               value={displayValue}
               onChange={(e) => tryParseInput(e.target.value)}
               spellCheck={false}
               className="bg-black/30 border-purple-500/50 text-white placeholder:text-purple-400/50 font-mono text-sm min-h-[220px] resize-y"
-            />
+        />
 
             <div className="flex flex-wrap items-center justify-between gap-3 text-xs uppercase tracking-wide text-purple-400/60">
               <span>Lines detected: {lineCount}</span>

@@ -62,22 +62,17 @@ export default function Home() {
           </div>
 
           {/* Main Hero Content */}
-          <div className="flex flex-col lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] gap-10 lg:gap-16 items-center mb-12 sm:mb-16">
+          <div className="flex flex-col lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] gap-10 lg:gap-16 items-center mb-10 sm:mb-14">
             <div className="w-full">
               <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start max-w-2xl w-full mx-auto lg:mx-0">
-                <div className="flex flex-wrap justify-center lg:justify-start gap-2 text-xs uppercase tracking-[0.32em] text-white/60">
-                  <span>Observability-first</span>
-                  <span className="hidden sm:inline">•</span>
-                  <span>Payment operations</span>
-                </div>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[3.65rem] xl:text-[4.05rem] leading-tight font-bold text-white max-w-2xl">
-                  Logging SDK for payment-critical telemetry
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[3.5rem] xl:text-[3.9rem] leading-tight font-bold text-white max-w-2xl">
+                  Instant telemetry for x402 payments
                   <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
-                    Overhead {'<'} 1ms per span
+                    {'<'} 1ms overhead per span
                   </span>
                 </h1>
                 <p className="text-base sm:text-lg text-purple-100/80 leading-relaxed max-w-xl">
-                  TraceX captures every payment span across the x402 stack without blocking hot paths. Encryption, batching, and transport run in the background so your code keeps flying.
+                  TraceX streams payment spans без блокировок: шифрование, буферизация и отправка работают асинхронно, пока критичный код делает свою работу.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
                   <Button 
@@ -87,10 +82,10 @@ export default function Home() {
                   >
                     <Link href="/dashboard">Dashboard</Link>
                   </Button>
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     variant="outline"
-                    className="border-white/15 text-white/80 hover:bg-white/10 hover:text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
+                    className="border-purple-400/40 text-purple-100 hover:bg-purple-500/10 hover:text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
                     asChild
                   >
                     <Link href="/docs">Documentation</Link>
@@ -146,7 +141,7 @@ await span.wrap(async () => {
           </div>
 
           {/* Stats Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-6">
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">{'<'} 1ms</div>
               <div className="text-xs sm:text-sm text-purple-400/70">Overhead per span</div>
@@ -163,11 +158,6 @@ await span.wrap(async () => {
               <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">100%</div>
               <div className="text-xs sm:text-sm text-purple-400/70">Non-blocking</div>
             </div>
-          </div>
-          <div className="mt-8 flex justify-center">
-            <Badge variant="outline" className="border-white/20 text-white/70 uppercase tracking-[0.3em] px-5 py-2">
-              Don't be blind in x402
-            </Badge>
           </div>
         </div>
       </section>

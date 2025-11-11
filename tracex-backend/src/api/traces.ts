@@ -69,15 +69,15 @@ export function createTracesRoutes(db: DatabaseClient) {
       await Promise.all(
         validatedTraces.map((trace) =>
           db.saveEncryptedTrace(
-            trace.traceId,
-            trace.facilitatorId || null,
-            trace.encryptedData,
-            trace.aesKeyEncrypted,
+          trace.traceId,
+          trace.facilitatorId || null,
+          trace.encryptedData,
+          trace.aesKeyEncrypted,
             trace.iv,
             tagsFromHeader
           )
         )
-      );
+        );
 
       res.status(200).json({
         success: true,

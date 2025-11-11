@@ -4,12 +4,14 @@
  */
 
 export interface DatabaseConfig {
-  host: string;
-  port: number;
-  database: string;
-  user: string;
-  password: string;
-  ssl?: boolean;
+  host?: string;
+  port?: number;
+  database?: string;
+  user?: string;
+  password?: string;
+  connectionString?: string;
+  ssl?: boolean | { [key: string]: unknown };
+  maxConnections?: number;
 }
 
 export const createSchemaSQL = `

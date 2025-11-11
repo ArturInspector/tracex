@@ -1,4 +1,5 @@
 import pg from 'pg';
+import type { PoolConfig } from 'pg';
 import type { DatabaseConfig } from './schema.js';
 
 const { Pool } = pg;
@@ -8,27 +9,14 @@ export class DatabaseClient {
   private initialized = false;
 
   constructor(config: DatabaseConfig) {
-    this.pool = new Pool({
-      host: config.host,
-      port: config.port,
-      database: config.database,
-      user: config.user,
-      password: config.password,
-      ssl: config.ssl ? { rejectUnauthorized: false } : false,
-      max: 20, // максимальное количество соединений
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000,
-    });
+    this.pool = new Pool(this.createPoolConfig(config));
 
-    // Обработка ошибок соединения
     this.pool.on('error', (err) => {
       console.error('Unexpected database pool error:', err);
     });
   }
 
-  /**
-   * Инициализация схемы БД
-   */
+
   async initialize(): Promise<void> {
     if (this.initialized) {
       return;
@@ -87,10 +75,6 @@ export class DatabaseClient {
 
     await this.pool.query(query, [traceId, facilitatorId, encryptedData, aesKeyEncrypted, iv, tags]);
   }
-
-  /**
-   * Регистрация публичного ключа facilitator'а
-   */
   async registerFacilitatorKey(facilitatorId: string, publicKey: string): Promise<void> {
     const query = `
       INSERT INTO facilitator_keys (facilitator_id, public_key)
@@ -298,6 +282,44 @@ export class DatabaseClient {
       CREATE INDEX IF NOT EXISTS idx_encrypted_traces_tags 
       ON encrypted_traces USING GIN (tags)
     `);
+  }
+
+  private createPoolConfig(config: DatabaseConfig): PoolConfig {
+    const baseConfig: PoolConfig = {
+      connectionString: process.env.DATABASE_URL!,
+      ssl: { rejectUnauthorized: false },
+    };
+    
+
+    const sslOption = this.normalizeSsl(config.ssl, Boolean(config.connectionString));
+    if (sslOption !== undefined) {
+      baseConfig.ssl = sslOption;
+    }
+
+    baseConfig.max = config.maxConnections ?? 20;
+    baseConfig.idleTimeoutMillis = 30000;
+    baseConfig.connectionTimeoutMillis = 2000;
+
+    return baseConfig;
+  }
+
+  private normalizeSsl(
+    ssl: DatabaseConfig['ssl'],
+    hasConnectionString: boolean
+  ): PoolConfig['ssl'] | undefined {
+    if (ssl === false) {
+      return false;
+    }
+
+    if (ssl === true || (ssl === undefined && hasConnectionString)) {
+      return { rejectUnauthorized: false };
+    }
+
+    if (ssl && typeof ssl === 'object') {
+      return ssl as PoolConfig['ssl'];
+    }
+
+    return undefined;
   }
 }
 

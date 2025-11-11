@@ -2,11 +2,29 @@ import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { DatabaseClient } from './db/client.js';
+import type { DatabaseConfig } from './db/schema.js';
 import { createTracesRoutes } from './api/traces.js';
 import { createKeysRoutes } from './api/keys.js';
 import { createMetricsRoutes } from './api/metrics.js';
 import { createOnchainRoutes } from './api/onchain.js';
 import { SolanaReader } from './services/solana-reader.js';
+
+function parseBoolean(value: string | undefined): boolean | undefined {
+  if (value === undefined || value === '') {
+    return undefined;
+  }
+
+  const normalized = value.toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) {
+    return true;
+  }
+
+  if (['0', 'false', 'no', 'off'].includes(normalized)) {
+    return false;
+  }
+
+  return undefined;
+}
 
 const app: Express = express();
 
@@ -14,14 +32,28 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-const dbConfig = {
+const rawConnectionString = process.env.DB_URL || process.env.DATABASE_URL;
+const connectionString = rawConnectionString?.trim() ? rawConnectionString.trim() : undefined;
+const parsedSsl = parseBoolean(process.env.DB_SSL);
+
+const dbConfig: DatabaseConfig = connectionString
+  ? {
+      connectionString,
+      ssl: parsedSsl ?? true,
+    }
+  : {
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432', 10),
   database: process.env.DB_NAME || 'tracex',
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
-  ssl: process.env.DB_SSL === 'true',
+      ssl: parsedSsl,
 };
+
+const maxConnections = parseInt(process.env.DB_POOL_MAX || '', 10);
+if (!Number.isNaN(maxConnections)) {
+  dbConfig.maxConnections = maxConnections;
+}
 
 const db = new DatabaseClient(dbConfig);
 
@@ -82,7 +114,11 @@ async function start() {
     
     app.listen(PORT, () => {
       console.log(`TraceX Backend API running on port ${PORT}`);
+      if (dbConfig.connectionString) {
+        console.log('Database: using connection string');
+      } else {
       console.log(`Database: ${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`);
+      }
     });
   } catch (error) {
     console.error('Failed to start server:', error);

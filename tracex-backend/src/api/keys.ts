@@ -17,7 +17,27 @@ export function createKeysRoutes(db: DatabaseClient) {
    */
   const registerKey = async (req: Request, res: Response): Promise<void> => {
     try {
+      const apiKey = req.headers['x-api-key'] as string;
+      const expectedKey = process.env.REGISTRATION_API_KEY;
+      
+      if (!apiKey || apiKey !== expectedKey) {
+        res.status(401).json({
+          success: false,
+          error: 'Unauthorized: Invalid or missing API key',
+        });
+        return;
+      }
+
       const body = RegisterKeySchema.parse(req.body);
+
+      const existingKey = await db.getFacilitatorPublicKey(body.facilitatorId);
+      if (existingKey) {
+        res.status(409).json({
+          success: false,
+          error: 'Facilitator ID already registered. Use a different ID or update endpoint.',
+        });
+        return;
+      }
 
       await db.registerFacilitatorKey(body.facilitatorId, body.publicKey);
 

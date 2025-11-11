@@ -7,6 +7,7 @@ import { createTracesRoutes } from './api/traces.js';
 import { createKeysRoutes } from './api/keys.js';
 import { createMetricsRoutes } from './api/metrics.js';
 import { createOnchainRoutes } from './api/onchain.js';
+import { createDemoRoutes } from './api/demo.js';
 import { SolanaReader } from './services/solana-reader.js';
 
 function parseBoolean(value: string | undefined): boolean | undefined {
@@ -78,6 +79,7 @@ const tracesRoutes = createTracesRoutes(db);
 const keysRoutes = createKeysRoutes(db);
 const metricsRoutes = createMetricsRoutes(db);
 const onchainRoutes = createOnchainRoutes(solanaReader);
+const demoRoutes = createDemoRoutes(db);
 
 app.post('/api/traces', tracesRoutes.postTraces);
 app.get('/api/traces', tracesRoutes.getTraces);
@@ -87,6 +89,7 @@ app.get('/api/metrics/public', metricsRoutes.getPublicMetrics);
 app.post('/api/metrics/publish', metricsRoutes.publishMetrics);
 app.get('/api/onchain/wallet', onchainRoutes.getWalletState);
 app.post('/api/onchain/signatures', onchainRoutes.postSignatureStatuses);
+app.post('/api/demo/generate', demoRoutes.generateDemo);
 
 app.get('/health', (_req, res) => {
   res.json({

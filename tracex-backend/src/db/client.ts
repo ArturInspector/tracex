@@ -289,7 +289,6 @@ export class DatabaseClient {
       connectionString: process.env.DATABASE_URL!,
       ssl: { rejectUnauthorized: false },
     };
-    
 
     const sslOption = this.normalizeSsl(config.ssl, Boolean(config.connectionString));
     if (sslOption !== undefined) {
@@ -298,7 +297,7 @@ export class DatabaseClient {
 
     baseConfig.max = config.maxConnections ?? 20;
     baseConfig.idleTimeoutMillis = 30000;
-    baseConfig.connectionTimeoutMillis = 2000;
+    baseConfig.connectionTimeoutMillis = 5000;
 
     return baseConfig;
   }

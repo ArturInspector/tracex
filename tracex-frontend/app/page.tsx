@@ -12,6 +12,9 @@ import { IntegrationsSection } from '@/components/integrations-section';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { HeroSteps } from '@/components/home/cta-steps';
+import { QuickStartStrip } from '@/components/home/quick-start-strip';
+import { TagInfographic } from '@/components/home/tag-infographic';
 
 export default function Home() {
   return (
@@ -71,7 +74,7 @@ export default function Home() {
                   </span>
                 </h1>
                 <p className="text-base sm:text-lg text-purple-100/80 leading-relaxed max-w-xl">
-                  TraceX streams payment spans.
+                  TraceX streams payment encryptedspans straight into dashboards.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
                   <Button 
@@ -131,7 +134,8 @@ const tracer = new X402Tracer({
 
 const span = tracer.startSpan('payment_operation');
 await span.wrap(async () => {
-  // Your payment logic here
+  // payment logic
+  req.headers['X-Tag-X'] = 'Service';
   await verifyTransaction();
 });`}
               </pre>
@@ -140,13 +144,13 @@ await span.wrap(async () => {
           </div>
 
           {/* Stats Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mt-10">
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">{'<'} 1ms</div>
               <div className="text-xs sm:text-sm text-purple-400/70">Overhead per span</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">10K+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 font-mono">9K</div>
               <div className="text-xs sm:text-sm text-purple-400/70">Spans per second</div>
             </div>
             <div className="text-center">
@@ -158,13 +162,20 @@ await span.wrap(async () => {
               <div className="text-xs sm:text-sm text-purple-400/70">Non-blocking</div>
             </div>
           </div>
-          <div className="mt-6 flex justify-center">
+          <div className="mt-10 flex justify-center">
             <Badge variant="outline" className="border-white/20 text-white/70 uppercase tracking-[0.3em] px-5 py-2">
               Don't be blind in x402
             </Badge>
           </div>
+          <div className="mt-14">
+            <HeroSteps />
+          </div>
         </div>
       </section>
+
+      <QuickStartStrip />
+
+      <TagInfographic />
 
       {/* Metrics Section */}
       <section className="relative z-10 px-4 py-20">

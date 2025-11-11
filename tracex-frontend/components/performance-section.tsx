@@ -11,7 +11,8 @@ export function PerformanceSection() {
     },
     {
       title: 'Non-Blocking I/O',
-      description: 'All transport operations run in background. Your code won\'t notice it\'s being traced.',
+      description:
+        'Transport runs fully async: end-to-end encryption, local key handling, and decentralized relays stay off the hot path.',
       color: 'from-blue-500/20 to-cyan-500/20',
     },
     {

@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { KeyInput } from '@/components/key-input';
 import { TraceViewer } from '@/components/trace-viewer';
+import { LiveTelemetry } from '@/components/dashboard/live-telemetry';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -28,6 +29,8 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+
+  const liveTelemetryEnabled = Boolean(privateKey && facilitatorId);
 
   const loadTraces = async () => {
     if (!facilitatorId.trim()) {
@@ -67,7 +70,7 @@ export default function DashboardPage() {
     }
   };
 
-  // Загружаем traces при изменении facilitatorId
+  // Load traces automatically when both facilitator and key are present
   useEffect(() => {
     if (facilitatorId && privateKey) {
       loadTraces();
@@ -153,17 +156,17 @@ export default function DashboardPage() {
         {/* Facilitator ID Input + Status */}
         <Card className="p-6 bg-gradient-to-br from-purple-950/50 to-blue-950/50 border-purple-500/30 backdrop-blur-sm">
           <div className="space-y-4">
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row gap-3">
             <Input
               placeholder="Enter Facilitator ID..."
               value={facilitatorId}
               onChange={(e) => setFacilitatorId(e.target.value)}
-              className="bg-black/30 border-purple-500/50 text-white placeholder:text-purple-400/50 font-mono"
+              className="bg-black/30 border-purple-500/50 text-white placeholder:text-purple-400/50 font-mono w-full"
             />
             <Button
               onClick={loadTraces}
               disabled={loading || !facilitatorId.trim()}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-purple-600 hover:bg-purple-700 w-full md:w-auto"
             >
               {loading ? 'Loading...' : 'Load Traces'}
             </Button>
@@ -174,7 +177,7 @@ export default function DashboardPage() {
                 setFacilitatorId('');
                 setEncryptedTraces([]);
               }}
-              className="border-purple-500/50 text-purple-300"
+              className="border-purple-500/50 text-purple-300 w-full md:w-auto"
             >
               Change Key
             </Button>
@@ -182,7 +185,7 @@ export default function DashboardPage() {
             
             {/* Live Status Indicators */}
             {facilitatorId && (
-              <div className="flex items-center gap-4 text-sm">
+              <div className="flex flex-wrap items-center gap-3 text-sm">
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
                   <span className={isConnected ? 'text-green-400' : 'text-red-400'}>
@@ -210,10 +213,19 @@ export default function DashboardPage() {
           </Card>
         )}
 
-        {encryptedTraces.length > 0 && (
+        {liveTelemetryEnabled && (
+          <LiveTelemetry
+            privateKey={privateKey!}
+            facilitatorId={facilitatorId}
+            apiUrl={API_URL}
+            enabled={liveTelemetryEnabled}
+          />
+        )}
+
+        {encryptedTraces.length > 0 && privateKey && (
           <TraceViewer
             encryptedTraces={encryptedTraces}
-            privateKey={privateKey}
+            privateKey={privateKey!}
             facilitatorId={facilitatorId}
           />
         )}

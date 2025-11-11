@@ -16,6 +16,41 @@ const EncryptedTraceSchema = z.object({
   timestamp: z.number(),
 });
 
+const TagSummaryQuerySchema = z.object({
+  facilitatorId: z.string().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(200).optional(),
+  minCount: z.coerce.number().int().min(1).max(1000).optional(),
+  from: z.string().optional(),
+  to: z.string().optional(),
+});
+
+const TAG_HEADER = 'x-tag-x';
+const MAX_TAGS_PER_REQUEST = 10;
+const MAX_TAG_LENGTH = 64;
+const TAG_SANITIZE_REGEX = /[^a-zA-Z0-9_\-./\s]/g;
+
+function extractTagsFromHeader(headerValue: string | string[] | undefined): string[] {
+  if (!headerValue) {
+    return [];
+  }
+
+  const rawValues = Array.isArray(headerValue) ? headerValue : [headerValue];
+
+  const tags = rawValues
+    .flatMap((value) => value.split(','))
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+    .map((tag) => tag.replace(TAG_SANITIZE_REGEX, '').trim())
+    .filter(Boolean)
+    .map((tag) => (tag.length > MAX_TAG_LENGTH ? tag.slice(0, MAX_TAG_LENGTH) : tag));
+
+  const unique = Array.from(new Set(tags.map((tag) => tag.toLowerCase()))).map((normalized) => {
+    return tags.find((tag) => tag.toLowerCase() === normalized) ?? normalized;
+  });
+
+  return unique.slice(0, MAX_TAGS_PER_REQUEST);
+}
+
 export function createTracesRoutes(db: DatabaseClient) {
   /**
    * POST /api/traces - Прием зашифрованных traces (batch)
@@ -28,21 +63,26 @@ export function createTracesRoutes(db: DatabaseClient) {
 
       // Валидация
       const validatedTraces = traces.map((trace) => EncryptedTraceSchema.parse(trace));
+      const tagsFromHeader = extractTagsFromHeader(req.headers[TAG_HEADER]);
 
       // Сохраняем в БД
-      for (const trace of validatedTraces) {
-        await db.saveEncryptedTrace(
-          trace.traceId,
-          trace.facilitatorId || null,
-          trace.encryptedData,
-          trace.aesKeyEncrypted,
-          trace.iv
-        );
-      }
+      await Promise.all(
+        validatedTraces.map((trace) =>
+          db.saveEncryptedTrace(
+            trace.traceId,
+            trace.facilitatorId || null,
+            trace.encryptedData,
+            trace.aesKeyEncrypted,
+            trace.iv,
+            tagsFromHeader
+          )
+        )
+      );
 
       res.status(200).json({
         success: true,
         saved: validatedTraces.length,
+        tagsApplied: tagsFromHeader,
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -95,9 +135,58 @@ export function createTracesRoutes(db: DatabaseClient) {
     }
   };
 
+  const getTagSummary = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const parsed = TagSummaryQuerySchema.safeParse(req.query);
+
+      if (!parsed.success) {
+        res.status(400).json({
+          success: false,
+          error: 'Invalid query parameters',
+          details: parsed.error.issues,
+        });
+        return;
+      }
+
+      const { facilitatorId, limit = 25, minCount = 1, from, to } = parsed.data;
+
+      const fromDate = from ? new Date(from) : undefined;
+      const toDate = to ? new Date(to) : undefined;
+
+      if ((fromDate && Number.isNaN(fromDate.getTime())) || (toDate && Number.isNaN(toDate.getTime()))) {
+        res.status(400).json({
+          success: false,
+          error: 'Invalid date format. Use ISO 8601 strings.',
+        });
+        return;
+      }
+
+      const summary = await db.getTagSummary({
+        facilitatorId,
+        limit,
+        minCount,
+        from: fromDate,
+        to: toDate,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: summary,
+        count: summary.length,
+      });
+    } catch (error) {
+      console.error('Failed to build tag summary:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+      });
+    }
+  };
+
   return {
     postTraces,
     getTraces,
+    getTagSummary,
   };
 }
 

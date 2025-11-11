@@ -49,6 +49,7 @@ const onchainRoutes = createOnchainRoutes(solanaReader);
 
 app.post('/api/traces', tracesRoutes.postTraces);
 app.get('/api/traces', tracesRoutes.getTraces);
+app.get('/api/traces/tags', tracesRoutes.getTagSummary);
 app.post('/api/keys/register', keysRoutes.registerKey);
 app.get('/api/metrics/public', metricsRoutes.getPublicMetrics);
 app.post('/api/metrics/publish', metricsRoutes.publishMetrics);

@@ -49,6 +49,8 @@ export class DatabaseClient {
           const { createSchemaSQL } = await import('./schema.js');
           await this.pool.query(createSchemaSQL);
           console.log('Database schema created successfully');
+        } else {
+          await this.ensureSchemaUpgrades();
         }
 
         this.initialized = true;
@@ -67,24 +69,23 @@ export class DatabaseClient {
     }
   }
 
-  /**
-   * Сохранение зашифрованного trace
-   */
+
   async saveEncryptedTrace(
     traceId: string,
     facilitatorId: string | null,
     encryptedData: string,
     aesKeyEncrypted: string,
-    iv: string
+    iv: string,
+    tags: string[]
   ): Promise<void> {
     const query = `
       INSERT INTO encrypted_traces (
-        trace_id, facilitator_id, encrypted_data, aes_key_encrypted, iv
-      ) VALUES ($1, $2, $3, $4, $5)
+        trace_id, facilitator_id, encrypted_data, aes_key_encrypted, iv, tags
+      ) VALUES ($1, $2, $3, $4, $5, $6)
       ON CONFLICT DO NOTHING
     `;
 
-    await this.pool.query(query, [traceId, facilitatorId, encryptedData, aesKeyEncrypted, iv]);
+    await this.pool.query(query, [traceId, facilitatorId, encryptedData, aesKeyEncrypted, iv, tags]);
   }
 
   /**
@@ -115,6 +116,7 @@ export class DatabaseClient {
     encryptedData: string;
     aesKeyEncrypted: string;
     iv: string;
+    tags: string[];
     createdAt: Date;
   }>> {
     const query = `
@@ -123,6 +125,7 @@ export class DatabaseClient {
         encrypted_data,
         aes_key_encrypted,
         iv,
+        tags,
         created_at
       FROM encrypted_traces
       WHERE facilitator_id = $1
@@ -137,7 +140,69 @@ export class DatabaseClient {
       encryptedData: row.encrypted_data,
       aesKeyEncrypted: row.aes_key_encrypted,
       iv: row.iv,
+      tags: row.tags || [],
       createdAt: row.created_at,
+    }));
+  }
+
+  async getTagSummary(options: {
+    facilitatorId?: string;
+    from?: Date;
+    to?: Date;
+    limit?: number;
+    minCount?: number;
+  }): Promise<Array<{
+    tag: string;
+    count: number;
+    lastSeenAt: Date;
+  }>> {
+    const { facilitatorId, from, to, limit = 25, minCount = 1 } = options;
+
+    const whereClauses: string[] = ['tags IS NOT NULL', 'array_length(tags, 1) > 0'];
+    const params: Array<string | number | Date> = [];
+
+    if (facilitatorId) {
+      params.push(facilitatorId);
+      whereClauses.push(`facilitator_id = $${params.length}`);
+    }
+
+    if (from) {
+      params.push(from);
+      whereClauses.push(`created_at >= $${params.length}`);
+    }
+
+    if (to) {
+      params.push(to);
+      whereClauses.push(`created_at <= $${params.length}`);
+    }
+
+    const aggregatedQuery = `
+      SELECT 
+        tag,
+        COUNT(*) AS count,
+        MAX(created_at) AS last_seen_at
+      FROM (
+        SELECT 
+          UNNEST(tags) AS tag,
+          created_at
+        FROM encrypted_traces
+        WHERE ${whereClauses.join(' AND ')}
+      ) AS exploded
+      GROUP BY tag
+      HAVING COUNT(*) >= $${params.length + 1}
+      ORDER BY count DESC, last_seen_at DESC
+      LIMIT $${params.length + 2}
+    `;
+
+    params.push(minCount);
+    params.push(limit);
+
+    const result = await this.pool.query(aggregatedQuery, params);
+
+    return result.rows.map((row) => ({
+      tag: row.tag,
+      count: parseInt(row.count, 10),
+      lastSeenAt: row.last_seen_at,
     }));
   }
 
@@ -209,6 +274,30 @@ export class DatabaseClient {
 
   private async delay(ms: number): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private async ensureSchemaUpgrades(): Promise<void> {
+    // Добавляем колонку tags, если её нет
+    const tagsColumn = await this.pool.query(`
+      SELECT 1 
+      FROM information_schema.columns 
+      WHERE table_name = 'encrypted_traces' 
+        AND column_name = 'tags'
+      LIMIT 1
+    `);
+
+    if (tagsColumn.rowCount === 0) {
+      await this.pool.query(`
+        ALTER TABLE encrypted_traces
+        ADD COLUMN tags TEXT[] NOT NULL DEFAULT '{}'::TEXT[]
+      `);
+    }
+
+    // Индекс для поиска по тегам
+    await this.pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_encrypted_traces_tags 
+      ON encrypted_traces USING GIN (tags)
+    `);
   }
 }
 

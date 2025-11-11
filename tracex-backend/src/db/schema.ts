@@ -37,9 +37,14 @@ CREATE TABLE IF NOT EXISTS encrypted_traces (
   encrypted_data TEXT NOT NULL,
   aes_key_encrypted TEXT NOT NULL,
   iv VARCHAR(255) NOT NULL,
+  tags TEXT[] NOT NULL DEFAULT '{}'::TEXT[],
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   CONSTRAINT fk_facilitator FOREIGN KEY (facilitator_id) REFERENCES facilitator_keys(facilitator_id) ON DELETE SET NULL
 );
+
+-- Обновляем схему, если таблица уже существует
+ALTER TABLE encrypted_traces
+  ADD COLUMN IF NOT EXISTS tags TEXT[] NOT NULL DEFAULT '{}'::TEXT[];
 
 -- Преобразуем в hypertable для TimescaleDB (если установлено)
 DO $$
@@ -65,6 +70,7 @@ CREATE TABLE IF NOT EXISTS public_metrics (
 CREATE INDEX IF NOT EXISTS idx_encrypted_traces_facilitator ON encrypted_traces(facilitator_id);
 CREATE INDEX IF NOT EXISTS idx_encrypted_traces_trace_id ON encrypted_traces(trace_id);
 CREATE INDEX IF NOT EXISTS idx_encrypted_traces_created_at ON encrypted_traces(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_encrypted_traces_tags ON encrypted_traces USING GIN (tags);
 CREATE INDEX IF NOT EXISTS idx_public_metrics_facilitator ON public_metrics(facilitator_id);
 CREATE INDEX IF NOT EXISTS idx_public_metrics_period ON public_metrics(period, timestamp DESC);
 `;
@@ -76,6 +82,7 @@ export interface EncryptedTraceRow {
   encrypted_data: string;
   aes_key_encrypted: string;
   iv: string;
+  tags: string[];
   created_at: Date;
 }
 

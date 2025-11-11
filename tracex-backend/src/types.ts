@@ -9,6 +9,7 @@ export interface EncryptedTrace {
   aesKeyEncrypted: string;
   iv: string;
   timestamp: number;
+  tags?: string[];
 }
 
 export interface PublicMetrics {

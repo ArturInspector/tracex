@@ -20,6 +20,8 @@ interface EncryptedTrace {
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+const SESSION_KEY_PRIVATE = 'tracex:session:privateKey';
+const SESSION_KEY_FACILITATOR = 'tracex:session:facilitatorId';
 
 export default function DashboardPage() {
   const [privateKey, setPrivateKey] = useState<string | null>(null);
@@ -69,6 +71,48 @@ export default function DashboardPage() {
       setLoading(false);
     }
   };
+
+  // Restore persisted values from sessionStorage
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const savedKey = window.sessionStorage.getItem(SESSION_KEY_PRIVATE);
+    if (savedKey) {
+      setPrivateKey(savedKey);
+    }
+
+    const savedFacilitator = window.sessionStorage.getItem(SESSION_KEY_FACILITATOR);
+    if (savedFacilitator) {
+      setFacilitatorId(savedFacilitator);
+    }
+  }, []);
+
+  // Persist private key and facilitator in sessionStorage
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (privateKey) {
+      window.sessionStorage.setItem(SESSION_KEY_PRIVATE, privateKey);
+    } else {
+      window.sessionStorage.removeItem(SESSION_KEY_PRIVATE);
+    }
+  }, [privateKey]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (facilitatorId) {
+      window.sessionStorage.setItem(SESSION_KEY_FACILITATOR, facilitatorId);
+    } else {
+      window.sessionStorage.removeItem(SESSION_KEY_FACILITATOR);
+    }
+  }, [facilitatorId]);
 
   // Load traces automatically when both facilitator and key are present
   useEffect(() => {
@@ -141,7 +185,7 @@ export default function DashboardPage() {
             <div>
               <div className="text-sm text-purple-400/60 uppercase tracking-wide">Key status</div>
               <div className="text-white text-xl font-semibold">
-                Private key is stored in browser memory only
+                Private key is cached in this browser session
               </div>
               <div className="text-sm text-purple-300/70 mt-1">
                 Fingerprint: {keyFingerprint ?? '—'}
